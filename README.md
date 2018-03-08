@@ -5,18 +5,28 @@
 Convert README files to reStructured Text with [Pandoc] and sanitize them for
 PyPI. Supposed to be used inside your setup scripts.
 
+```
+# MANIFEST.in
+include README.rst
+include requirements.txt
+```
+
 ```python
-if any('dist' in x for x in sys.argv[1:]):
-  import setuptools_readme
-  setuptools_readme.convert('README.md', encoding='utf8')
-# If you skip this check you need to make sure that the README.rst is
-# included in the package in MANIFEST.in.
-if os.path.isfile('README.rst'):  
-  with io.open('README.rst', encoding='utf8') as fp:
-    long_description = fp.read()
-    del fp
-else:
-  long_description = ''
+# setup.py
+import io
+import os
+import setuptools
+
+if any('dist' in x for x in sys.argv[1:]) and os.path.isfile('README.md'):
+  try:
+    import setuptools_readme
+  except ImportError:
+    print('Warning: README.rst could not be generated, setuptools_readme module missing.')
+  else:
+    setuptools_readme.convert('README.md', encoding='utf8')
+
+with io.open('README.rst', encoding='utf8') as fp:
+  long_description = fp.read()
 ```
 
 __Features__

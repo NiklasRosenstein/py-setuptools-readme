@@ -34,6 +34,8 @@ def convert(infile, outfile='README.rst', sanitize=True, encoding=None):
   Uses Pandoc to convert the input file *infile* to reStructured Text and
   writes it to *outfile*. If *sanitize* is True, the output file will be
   sanitized for use on PyPI.
+
+  Returns the content of the output file.
   """
 
   command = ['pandoc', '-s', infile, '-o', outfile]
@@ -43,8 +45,7 @@ def convert(infile, outfile='README.rst', sanitize=True, encoding=None):
     if exc.errno != errno.ENOENT:
       raise
     # Pandoc command could not be found.
-    print('Note: Pandoc could not be found. Downloading latest release ...',
-          file=sys.stderr)
+    print('Pandoc not found in PATH.')
     pandoc_bin = download_pandoc()
     command[0] = pandoc_bin
     code = subprocess.call(command)
@@ -56,12 +57,15 @@ def convert(infile, outfile='README.rst', sanitize=True, encoding=None):
   if sanitize:
     sanitize_rest(outfile, encoding)
 
+  with io.open(outfile, 'r', encoding=encoding) as fp:
+    return fp.read()
+
 
 def sanitize_rest(rstfile, encoding=None):
   """
-  Sanitizes reStructured text in the file *rstfile* for use o PyPI. Currently,
+  Sanitizes reStructured text in the file *rstfile* for use on PyPI. Currently,
   this is only about stripping `.. raw:: html` blocks from the file. The new
-  contents will be written to the same *rstfile*/
+  contents will be written to the same *rstfile*.
   """
 
   with io.open('README.rst', encoding=encoding) as fp:
@@ -114,6 +118,9 @@ def download_pandoc():
     raise EnvironmentError('unsupported platform: {!r}'.format(sys.platform))
 
   outfile = os.path.join(downloads_dir, filename)
+  if os.path.isfile(outfile):
+    print('Pandoc already in ~/Downloads.')
+    return outfile
 
   if archive_driver == 'zip':
     import zipfile
