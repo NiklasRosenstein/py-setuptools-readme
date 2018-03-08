@@ -16,7 +16,7 @@ else:
 
 setuptools.setup(
   name='setuptools-readme',
-  version='1.0.1',
+  version='1.0.2',
   license='MIT',
   url='https://github.com/NiklasRosenstein/py-setuptools-readme',
   author='Niklas Rosenstein',
