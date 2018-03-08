@@ -35,6 +35,7 @@ __Features__
   (to ~/Downloads)
 * Removes `.. raw:: html` blocks from the reST output file (as it breaks
   rendering on PyPI)
+* Errors if your `MANIFEST.in` does not contain the `include README.rst` line
 
 __To do__
 

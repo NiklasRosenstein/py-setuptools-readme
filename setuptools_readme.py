@@ -29,7 +29,8 @@ import subprocess
 import sys
 
 
-def convert(infile, outfile='README.rst', sanitize=True, encoding=None):
+def convert(infile, outfile='README.rst', sanitize=True, encoding=None,
+            check_manifest_in=True):
   """
   Uses Pandoc to convert the input file *infile* to reStructured Text and
   writes it to *outfile*. If *sanitize* is True, the output file will be
@@ -37,6 +38,19 @@ def convert(infile, outfile='README.rst', sanitize=True, encoding=None):
 
   Returns the content of the output file.
   """
+
+  if check_manifest_in:
+    if not os.path.isfile('MANIFEST.in'):
+      raise RuntimeError('Missing MANIFEST.in. Create it and add REAMDE.rst to it.')
+    else:
+      with open('MANIFEST.in') as fp:
+        found = False
+        for line in fp:
+          if re.match('include\s+README.rst', line):
+            found = True
+            break
+        if not found:
+          raise RuntimeError('You are missing README.rst in your MANIFEST.in file.')
 
   command = ['pandoc', '-s', infile, '-o', outfile]
   try:
