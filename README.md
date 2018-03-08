@@ -9,9 +9,14 @@ PyPI. Supposed to be used inside your setup scripts.
 if any('dist' in x for x in sys.argv[1:]):
   import setuptools_readme
   setuptools_readme.convert('README.md', encoding='utf8')
-with io.open('README.rst', encoding='utf8') as fp:
-  long_description = fp.read()
-  del fp
+# If you skip this check you need to make sure that the README.rst is
+# included in the package in MANIFEST.in.
+if os.path.isfile('README.rst'):  
+  with io.open('README.rst', encoding='utf8') as fp:
+    long_description = fp.read()
+    del fp
+else:
+  long_description = ''
 ```
 
 __Features__

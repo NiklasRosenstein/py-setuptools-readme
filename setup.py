@@ -1,18 +1,22 @@
 
 import io
+import os
 import setuptools
 import setuptools_readme
 import sys
 
 if any('dist' in x for x in sys.argv):
   setuptools_readme.convert('README.md', encoding='utf8')
-with io.open('README.rst', encoding='utf8') as fp:
-  long_description = fp.read()
-  del fp
+if os.path.isfile('README.rst'):
+  with io.open('README.rst', encoding='utf8') as fp:
+    long_description = fp.read()
+    del fp
+else:
+  long_description = ''
 
 setuptools.setup(
   name='setuptools-readme',
-  version='1.0.0',
+  version='1.0.1',
   license='MIT',
   url='https://github.com/NiklasRosenstein/py-setuptools-readme',
   author='Niklas Rosenstein',
